@@ -2,7 +2,8 @@
 import React, { useState } from 'react';
 import './login.css'; // Import the CSS file
 import { auth } from "../firebase"
-
+import {Card} from "react-bootstrap";
+import quote from "../images/appl.jpeg"
 const LoginPage = () => {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
@@ -14,23 +15,12 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="login-container">
-      <div className="split-container">
-        {/* Left Half - Image of a Restaurant */}
-        <div className="left-half">
-          {/* Include an image of a restaurant */}
-          <img
-            src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=60&w=500&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmVzdGF1cmFudHxlbnwwfHwwfHx8MA%3D%3D" // Replace with your image path
-            alt="Restaurant"
-            className="restaurant-image"
-          />
-        </div>
-        
-        {/* Right Half - Sign In Form */}
-        <div className="right-half">
-          <h1>Halifax DineDiscover</h1>
-          <form onSubmit={handleLoginSubmit}>
-            <label htmlFor="userId">User ID:</label>
+    <Card className='cardStyle' style={{ width: '18rem' }}>
+    <Card.Img style = {{height: '200px', width: "200px"}}variant="top" src= {quote}/>
+    <Card.Body>
+      {/* <Card.Title>Login</Card.Title> */}
+      <form onSubmit={handleLoginSubmit}>
+            <label style={{color:"#f2a183", fontWeight: 'bold'}}htmlFor="userId">User ID:</label>
             <input
               type="text"
               id="userId"
@@ -39,7 +29,7 @@ const LoginPage = () => {
               value={userId}
               required
             />
-            <label htmlFor="password">Password:</label>
+            <label style={{color:"#f2a183", fontWeight: 'bold'}} htmlFor="password">Password:</label>
             <input
               type="password"
               id="password"
@@ -47,11 +37,10 @@ const LoginPage = () => {
               value={password}
               required
             />
-            <button type="submit">Sign In</button>
+            <button style= {{backgroundColor: "#C08261"}}type="submit">Sign In</button>
           </form>
-        </div>
-      </div>
-    </div>
+    </Card.Body>
+  </Card>
   );
 };
 
