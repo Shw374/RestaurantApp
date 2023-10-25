@@ -7,7 +7,6 @@ table = dynamodb.Table('Reservations')
 
 def lambda_handler(event, context):
     try:
-        # Assuming event['body'] is a string containing the JSON request payload
         request_body = json.loads(event['body'])
 
         slot = request_body['slot']
@@ -20,7 +19,6 @@ def lambda_handler(event, context):
         isCancelled = request_body['isCancelled']
         reservationDate = request_body['reservationDate']
 
-        # Query DynamoDB
         response = table.query(
             IndexName='restaurantId-reservationDate-index',
             KeyConditionExpression='restaurantId = :restaurantId AND reservationDate BETWEEN :start_time AND :end_time',
@@ -39,8 +37,7 @@ def lambda_handler(event, context):
                 })
             }
 
-        # Insert the reservation into DynamoDB
-        reservation_id = str(int(datetime.utcnow().timestamp() * 1000))  # Current timestamp in milliseconds
+        reservation_id = str(int(datetime.utcnow().timestamp() * 1000)) 
         table.put_item(
             Item={
                 'reservationId': reservation_id,

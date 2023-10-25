@@ -6,20 +6,17 @@ table = dynamodb.Table('Reservations')
 
 def lambda_handler(event, context):
     try:
-        # Assuming event['body'] contains the customer_id for which bookings need to be fetched
         request_body = json.loads(event['body'])
         customer_id = request_body['customer_id']
 
-        # Query DynamoDB using the GSI
         response = table.query(
-            IndexName='customer_id-index',  # Using the GSI for querying based on customer_id
+            IndexName='customer_id-index',
             KeyConditionExpression='customer_id = :customer_id',
             ExpressionAttributeValues={
                 ':customer_id': customer_id
             }
         )
 
-        # If there are no bookings, return an appropriate message
         if response['Count'] == 0:
             return {
                 'statusCode': 200,
@@ -29,7 +26,6 @@ def lambda_handler(event, context):
                 })
             }
 
-        # Return the found bookings
         return {
             'statusCode': 200,
             'body': json.dumps({
