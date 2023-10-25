@@ -1,17 +1,42 @@
-// login.js
 import React, { useState } from 'react';
 import './login.css'; // Import the CSS file
 import { auth } from "../firebase"
 import {Card} from "react-bootstrap";
 import quote from "../images/appl.jpeg"
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
+
+
 const LoginPage = () => {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+  
 
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    // signInWithEmailAndPassword(auth, email, password)
-    // .then()
+    try {
+      const userCred = await signInWithEmailAndPassword(auth, userId, password);
+      // navigate("/posts", { state: { userId} });
+      alert("Loginned")
+    } catch (error) {
+      alert('Invalid credentials. Please try again.');
+      // You might want to log the error for debugging purposes
+      console.error(error);
+    }
+  };
+
+  const handleRegisterLink = () => {
+    navigate("/register");
+  };
+  let handleLoginWithGoogle = async (e) => {
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider).then((userCred) => {
+      alert(userCred.user.email);
+      // navigate('/register');
+    }).catch((err) => {
+      alert(err);
+    })
   };
 
   return (
@@ -38,6 +63,10 @@ const LoginPage = () => {
               required
             />
             <button style= {{backgroundColor: "#C08261"}}type="submit">Sign In</button>
+            <br/>
+            <button onClick = {handleLoginWithGoogle} style= {{backgroundColor: "#C08261"}}type="submit"> Sign In with Google</button> 
+            <br/>
+            <a href="#" onClick={handleRegisterLink}>Not Registered?</a>
           </form>
     </Card.Body>
   </Card>
