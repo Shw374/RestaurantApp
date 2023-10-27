@@ -5,6 +5,7 @@ import {Card} from "react-bootstrap";
 import quote from "../images/appl.jpeg"
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import AWS from 'aws-sdk';
 
 
 const LoginPage = () => {
