@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { FaBell } from 'react-icons/fa';
 
 const NotificationBell = () => {
-  const [unreadCount, setUnreadCount] = useState(3); // Replace with your actual unread notification count
+  const [unreadCount, setUnreadCount] = useState(3);
+
   const [showNotifications, setShowNotifications] = useState(false);
 
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
+
     if (showNotifications) {
-      setUnreadCount(0); // Mark notifications as read when the bell icon is clicked
+      setUnreadCount(0);
     }
   };
 

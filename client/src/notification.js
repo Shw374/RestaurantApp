@@ -4,9 +4,7 @@ import NotificationBell from './NotificationBell';
 const App = () => {
   return (
     <div>
-      <header>
-        <NotificationBell />
-      </header>
+      <header><NotificationBell /></header>
     </div>
   );
 };
