@@ -16,7 +16,7 @@ const NotificationBell = () => {
     <div className="notification-bell">
       <div onClick={toggleNotifications} className="notification-bell-icon">
         <FaBell />
-        {unreadCount > 0 && <span className="badge">{unreadCount}</span>}
+        {unreadCount >= 1 && <span className="badge">{unreadCount}</span>}
       </div>
 
       {showNotifications && (
@@ -28,6 +28,7 @@ const NotificationBell = () => {
             <p>Notification 2: Reservation Changed.</p>
           </div>
         </div>
+      )
       }
     </div>
   );
