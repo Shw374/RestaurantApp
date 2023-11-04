@@ -5,7 +5,6 @@ import {Card} from "react-bootstrap";
 import quote from "../images/appl.jpeg"
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import AWS from 'aws-sdk';
 
 
 const LoginPage = () => {
@@ -18,23 +17,23 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       const userCred = await signInWithEmailAndPassword(auth, userId, password);
-      // navigate("/posts", { state: { userId} });
+      navigate("/register");
       alert("Loginned")
     } catch (error) {
       alert('Invalid credentials. Please try again.');
-      // You might want to log the error for debugging purposes
+      
       console.error(error);
     }
   };
 
-  const handleRegisterLink = () => {
-    navigate("/register");
-  };
+  // const handleRegisterLink = () => {
+  //   navigate("/register");
+  // };
   let handleLoginWithGoogle = async (e) => {
     const provider = new GoogleAuthProvider();
     await signInWithPopup(auth, provider).then((userCred) => {
       alert(userCred.user.email);
-      // navigate('/register');
+      navigate('/register');
     }).catch((err) => {
       alert(err);
     })
@@ -42,7 +41,11 @@ const LoginPage = () => {
 
   return (
     <Card className='cardStyle' style={{ width: '18rem' }}>
-    <Card.Img style = {{height: '200px', width: "200px"}}variant="top" src= {quote}/>
+    <Card.Img
+  style={{ display: 'block', margin: 'auto', height: '200px', width: '200px' }}
+  variant="top"
+  src={quote}
+/>
     <Card.Body>
       {/* <Card.Title>Login</Card.Title> */}
       <form onSubmit={handleLoginSubmit}>
@@ -67,7 +70,9 @@ const LoginPage = () => {
             <br/>
             <button onClick = {handleLoginWithGoogle} style= {{backgroundColor: "#C08261"}}type="submit"> Sign In with Google</button> 
             <br/>
-            <a href="#" onClick={handleRegisterLink}>Not Registered?</a>
+            <a href="/register" style={{ display: 'block', margin: 'auto', textAlign: 'center' }}>
+  Not Registered?
+</a>
           </form>
     </Card.Body>
   </Card>

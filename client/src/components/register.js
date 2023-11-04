@@ -7,49 +7,57 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+
+
 const RegisterPage = () => {
+  
+
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const [conpassword, setConPassword] = useState('');
   const [name, setName] = useState('');
-  const [numberOfCust, setCustNum] = useState(0);
   const navigate = useNavigate();
 
-  const handleregisterSubmit = async (e) => {
+  const handleregisterSubmit = (e) => {
     e.preventDefault();
 
     try {
       if (password === conpassword && password !== '' && conpassword !== '' && name !== "") {
+
         // Register user
-        await createUserWithEmailAndPassword(auth, userId, password)
-        .then((userCred2) => {
+       createUserWithEmailAndPassword(auth, userId, password)
+        .then(async (userCred2) => {
             alert('Registration Successful');
-            axios.get("https://4jz3f26qf6.execute-api.us-east-1.amazonaws.com/dev/custcount")
-            .then((response) => {
-            setCustNum(response.body)
-            console.log(numberOfCust);
-            }).catch((err) => {
-              alert("Coudnt fetch number of customers")
-            })
-            let postData = {
-              "CustomerId": numberOfCust,
-              "Name": name,
-              "Email": userId,
-              "operation": "create"
-            }
-            console.log(postData);
-            axios.post("https://4jz3f26qf6.execute-api.us-east-1.amazonaws.com/addstage/addcustdetails", postData)
-            .then((resp) => {
-              console.log("This is resp : "+ resp);
-              if(resp.body === "CustomerId created successfully."){
-                alert("success")
-                navigate("/");
+            const response = await axios.get("https://jthj8sqgyg.execute-api.us-east-1.amazonaws.com/count/cust-res/get-count");
+            const numCustResponse = response.data;
+            if (numCustResponse) {
+              const numCust = numCustResponse.body;
+              console.log("Number " + (numCust + 1));
+
+              let postData = {
+                "CustomerId": (numCust+1),
+                "Name": name,
+                "Email": userId,
+                "operation": "create"
               }
-            })
-            .catch(error => {
-            // Handle errors
-            console.error('Error:', error);
-            });
+              console.log(postData);
+              axios.post("https://jthj8sqgyg.execute-api.us-east-1.amazonaws.com/crud/cust-res", postData)
+              .then((resp) => {
+                console.log(resp);
+                if(resp.data.body === "CustomerId created successfully."){
+                  alert("success")
+                  navigate("/");
+                }
+              })
+              .catch(error => {
+              console.error('Error:', error);
+              });
+            } else {
+              console.log("Invalid response format");
+              alert("Couldn't fetch the number of customers");
+              return;
+            }
+            
         })
         .catch((error) => {
             alert(error)
@@ -71,7 +79,11 @@ const RegisterPage = () => {
 
   return (
     <Card className='cardStyle' style={{ width: '18rem' }}>
-      <Card.Img style={{ height: '200px', width: '200px' }} variant='top' src={quote} />
+      <Card.Img
+        style={{ display: 'block', margin: 'auto', height: '200px', width: '200px' }}
+        variant="top"
+        src={quote}
+      />
       <Card.Body>
         <form onSubmit={handleregisterSubmit}>
           <label style={{ color: '#f2a183', fontWeight: 'bold' }} htmlFor='name'>
@@ -120,9 +132,9 @@ const RegisterPage = () => {
             Sign up
           </button>
           <br />
-          <a href='/'>
-            Already have an account?
-          </a>
+          <a href='/' style={{ display: 'block', margin: 'auto', textAlign: 'center' }}>
+  Already have an account?
+</a>
         </form>
       </Card.Body>
     </Card>
