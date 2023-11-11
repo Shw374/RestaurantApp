@@ -1,47 +1,48 @@
 import json
 import boto3
 from decimal import Decimal
+from boto3.dynamodb.conditions import Key
 
 dynamodb = boto3.resource('dynamodb')
 table = dynamodb.Table('Reservations')
-ARN = "arn:aws:execute-api:us-east-1:728932281340:fl3d9hzy6a/*/POST/viewbookings"
+ARN = "arn:aws:execute-api:us-east-1:728932281340:35mb0dp42l/*/POST/getallbookings"
+
 # {
 #   "queryStringParameters": {
-#     "reservationId": "1699366043259"
+#     "customer_id": "customer123"
 #   }
 # }
 
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Decimal):
-            return float(obj)
+            return float(obj)  
         return super(DecimalEncoder, self).default(obj)
 
 def lambda_handler(event, context):
     try:
-        reservation_id = event.get('queryStringParameters', {}).get('reservationId')
+        customer_id = event.get('queryStringParameters', {}).get('customer_id')
 
-        if not reservation_id:
+        if not customer_id:
             return {
                 'statusCode': 400,
-                'body': json.dumps({'message': 'reservationId query parameter is required.'})
+                'body': json.dumps({'message': 'customer_id query parameter is required.'})
             }
 
-        response = table.get_item(
-            Key={
-                'reservationId': reservation_id
-            }
+        response = table.query(
+            IndexName='customer_id-index',  
+            KeyConditionExpression=Key('customer_id').eq(customer_id)
         )
 
-        if 'Item' not in response:
+        if 'Items' not in response or not response['Items']:
             return {
                 'statusCode': 404,
-                'body': json.dumps({'message': 'Reservation not found.'})
+                'body': json.dumps({'message': 'No reservations found for the provided customer_id.'})
             }
 
         return {
             'statusCode': 200,
-            'body': json.dumps(response['Item'], cls=DecimalEncoder)
+            'body': json.dumps(response['Items'], cls=DecimalEncoder)
         }
 
     except Exception as e:
