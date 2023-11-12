@@ -1,5 +1,7 @@
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
+import { close, confirm, delegate, validateConfirmation } from "./utils.mjs";
+
 export const handler = async (event, context) => {
   const slotName = Object.keys(event.sessionState.intent.slots);
 
@@ -177,7 +179,7 @@ export const handler = async (event, context) => {
           );
     }
   }
-  
+
   return delegate(
     event.sessionState,
     outputSessionAttributes,
