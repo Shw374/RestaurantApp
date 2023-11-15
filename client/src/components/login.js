@@ -7,7 +7,6 @@ import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
-
 const LoginPage = () => {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
@@ -18,8 +17,7 @@ const LoginPage = () => {
     try {
       const userCred = await signInWithEmailAndPassword(auth, userId, password);
       Cookies.set('userId', userCred._tokenResponse.email);
-      navigate("/register");
-      alert("Loginned")
+      navigate("/listrestaurant",{ state: { userId } });
     } catch (error) {
       alert('Invalid credentials. Please try again.');
       

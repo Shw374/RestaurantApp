@@ -60,6 +60,7 @@ const RegisterPage = () => {
             alert(error)
         })
         
+        // You might want to do additional actions after successful registration
       } else {
         alert('Passwords don\'t match or are empty. Please try again.');
       }
@@ -68,6 +69,10 @@ const RegisterPage = () => {
       console.error(error);
     }
   };
+
+  // const handleRegisterLink = () => {
+  //   navigate("/")
+  // };
 
   return (
     <Card className='cardStyle' style={{ width: '18rem' }}>
