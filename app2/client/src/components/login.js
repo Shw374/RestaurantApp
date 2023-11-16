@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import './login.css'; // Import the CSS file
 import { auth } from "../firebase"
 import {Card} from "react-bootstrap";
-import quote from "../images/appl.jpeg"
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,6 +16,7 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       const userCred = await signInWithEmailAndPassword(auth, userId, password);
+      Cookies.set('userId', userCred._tokenResponse.email);
       navigate("/register");
       alert("Loginned")
     } catch (error) {
@@ -26,13 +26,10 @@ const LoginPage = () => {
     }
   };
 
-  // const handleRegisterLink = () => {
-  //   navigate("/register");
-  // };
   let handleLoginWithGoogle = async (e) => {
     const provider = new GoogleAuthProvider();
     await signInWithPopup(auth, provider).then((userCred) => {
-      alert(userCred.user.email);
+      Cookies.set('userId', userCred.user.email);
       navigate('/register');
     }).catch((err) => {
       alert(err);
