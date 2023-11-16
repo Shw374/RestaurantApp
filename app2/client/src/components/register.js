@@ -25,14 +25,14 @@ const RegisterPage = () => {
 
         // Register user
        createUserWithEmailAndPassword(auth, userId, password)
-        .then(async (userCred2) => {
+        .then((userCred2) => {
             alert('Registration Successful');
+            console.log(userCred2);
+            navigate("/");
       })
         .catch((error) => {
             alert(error)
         })
-        
-        // You might want to do additional actions after successful registration
       } else {
         alert('Passwords don\'t match or are empty. Please try again.');
       }
