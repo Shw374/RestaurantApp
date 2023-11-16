@@ -4,6 +4,7 @@ import { auth } from "../firebase"
 import {Card} from "react-bootstrap";
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 
 const LoginPage = () => {
@@ -20,6 +21,7 @@ const LoginPage = () => {
       navigate("/register");
       alert("Loginned")
     } catch (error) {
+      console.log(error);
       alert('Invalid credentials. Please try again.');
       
       console.error(error);
