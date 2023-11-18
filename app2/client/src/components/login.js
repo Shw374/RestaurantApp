@@ -17,7 +17,6 @@ const LoginPage = () => {
     try {
       const userCred = await signInWithEmailAndPassword(auth, userId, password);
       Cookies.set('userId', userCred._tokenResponse.email);
-      navigate("/reservation");
       navigate("/addrestaurant");
     } catch (error) {
       console.log(error);
@@ -31,7 +30,6 @@ const LoginPage = () => {
     const provider = new GoogleAuthProvider();
     await signInWithPopup(auth, provider).then((userCred) => {
       Cookies.set('userId', userCred.user.email);
-      navigate('/reservation');
       navigate("/addrestaurant");
 
     }).catch((err) => {
