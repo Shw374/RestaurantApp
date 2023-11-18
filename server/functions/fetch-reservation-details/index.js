@@ -249,52 +249,59 @@ export const handler = async (event, context) => {
     }
   } else if (event.sessionState.intent.name === "ReviewRestaurant") {
     console.log("inside ReviewRestaurant");
+    const review =
+      event.sessionState.intent.slots.Review?.value?.interpretedValue;
     if (
       outputSessionAttributes["RestaurantName"] &&
-      outputSessionAttributes["Area"] &&
-      event.sessionState.intent.slots.Review?.value?.interpretedValue !== null
+      // outputSessionAttributes["Area"] &&
+      review !== null
     ) {
+      console.log("Fulfilled all slots");
+
       // API call for fetching for getting restaurant details
       if (event.sessionState.intent.confirmationState === "Confirmed") {
-        try {
-          const response = await axios.put(
-            "https://y9xx9soj89.execute-api.us-east-1.amazonaws.com/reviews",
+        console.log("AInside confirmation block for review");
+        return await addReview(
             {
-              reviewId: uuidv4(),
+            review_id: uuidv4(),
               type: "RESTAURANT",
               id: "1",
-              customerId: "john@gmail.com",
-              review:
-                event.sessionState.intent.slots.Review?.value?.interpretedValue,
-            }
-          );
-          console.log(response);
-        } catch (err) {
+            customer_id: "john@gmail.com",
+            review: review,
+          },
+          (res) => {
+            console.log("Success:", res);
+
           return close(
             event.sessionState,
             "Fulfilled",
             outputSessionAttributes,
             {
               contentType: "PlainText",
-              content: "Oops! Something went wrong.",
+                content: "Thank your for your valuable review",
             },
             event.requestAttributes
           );
-        }
-      }
+          },
+          (err) => {
+            console.log("Error:", err);
 
-      return event.sessionState.intent.confirmationState === "Confirmed"
-        ? close(
+            return close(
             event.sessionState,
             "Fulfilled",
             outputSessionAttributes,
             {
               contentType: "PlainText",
-              content: "Thank your for your valuable review",
+                content: "Oops! Something went wrong.",
             },
             event.requestAttributes
-          )
-        : confirm(
+            );
+          }
+        );
+      }
+
+      if (restaurantName && review)
+        return confirm(
             event.sessionState,
             outputSessionAttributes,
             {
@@ -305,61 +312,65 @@ export const handler = async (event, context) => {
           );
     }
   } else if (event.sessionState.intent.name === "ReviewMenuItem") {
+    const review =
+      event.sessionState.intent.slots.Review?.value?.interpretedValue;
     console.log("inside ReviewMenuItem");
     if (
       outputSessionAttributes["RestaurantName"] &&
-      outputSessionAttributes["Area"] &&
-      outputSessionAttributes["MenuType"] &&
+      // outputSessionAttributes["Area"] &&
+      // outputSessionAttributes["MenuType"] &&
       outputSessionAttributes["MenuItem"] &&
-      event.sessionState.intent.slots.ItemReview?.value?.interpretedValue !==
-        null
+      review !== null
     ) {
       console.log(
         "attribute exists",
         outputSessionAttributes["RestaurantName"]
       );
       // API call for fetching menu for restaurant
+
       if (event.sessionState.intent.confirmationState === "Confirmed") {
-        try {
-          const response = await axios.put(
-            "https://y9xx9soj89.execute-api.us-east-1.amazonaws.com/reviews",
+        console.log("AInside confirmation block for review");
+        return await addReview(
             {
-              reviewId: uuidv4(),
+            review_id: uuidv4(),
               type: "ITEM",
               id: "1",
-              customerId: "john@gmail.com",
-              review:
-                event.sessionState.intent.slots.ItemReview?.value
-                  ?.interpretedValue,
-            }
-          );
-          console.log(response);
-        } catch (err) {
+            customer_id: "john@gmail.com",
+            review: review,
+          },
+          (res) => {
+            console.log("Success:", res);
+
           return close(
             event.sessionState,
             "Fulfilled",
             outputSessionAttributes,
             {
               contentType: "PlainText",
-              content: "Oops! Something went wrong.",
+                content: "Thank your for your valuable review",
             },
             event.requestAttributes
           );
-        }
-      }
+          },
+          (err) => {
+            console.log("Error:", err);
 
-      return event.sessionState.intent.confirmationState === "Confirmed"
-        ? close(
+            return close(
             event.sessionState,
             "Fulfilled",
             outputSessionAttributes,
             {
               contentType: "PlainText",
-              content: "Thank your for your valuable review",
+                content: "Oops! Something went wrong.",
             },
             event.requestAttributes
-          )
-        : confirm(
+            );
+          }
+        );
+      }
+
+      if (restaurantName && menuItem && review)
+        return confirm(
             event.sessionState,
             outputSessionAttributes,
             {
@@ -370,11 +381,13 @@ export const handler = async (event, context) => {
           );
     }
   } else if (event.sessionState.intent.name === "RateRestaurant") {
+    const rating =
+      event.sessionState.intent.slots.Ratings?.value?.interpretedValue;
     console.log("inside RateRestaurant");
     if (
       outputSessionAttributes["RestaurantName"] &&
-      outputSessionAttributes["Area"] &&
-      event.sessionState.intent.slots.Rating?.value?.interpretedValue !== null
+      // outputSessionAttributes["Area"] &&
+      rating !== null
     ) {
       console.log(
         "attribute exists",
@@ -382,48 +395,51 @@ export const handler = async (event, context) => {
       );
       // API call for fetching restaurant details for restaurant_id
       if (event.sessionState.intent.confirmationState === "Confirmed") {
-        try {
-          const response = await axios.put(
-            "https://o6u2ibjdxg.execute-api.us-east-1.amazonaws.com/ratings",
+        return await addRating(
             {
-              ratingId: uuidv4(),
-              customerId: "john@gmail.com",
-              rating:
-                event.sessionState.intent.slots.Rating?.value?.interpretedValue,
-            }
-          );
-          console.log(response);
-        } catch (err) {
+            rating_id: uuidv4(),
+            customer_id: "john@gmail.com",
+            rating: rating,
+            restaurant_id: "1",
+          },
+          (res) => {
+            console.log("Success:", res);
+
           return close(
             event.sessionState,
             "Fulfilled",
             outputSessionAttributes,
             {
               contentType: "PlainText",
-              content: "Oops! Something went wrong.",
+                content: `Thank your for rating ${restaurantName}`,
             },
             event.requestAttributes
           );
-        }
-      }
+          },
+          (err) => {
+            console.log("Error:", err);
 
-      return event.sessionState.intent.confirmationState === "Confirmed"
-        ? close(
+            return close(
             event.sessionState,
             "Fulfilled",
             outputSessionAttributes,
             {
               contentType: "PlainText",
-              content: "Thank your for your valuable review",
+                content: "Oops! Something went wrong.",
             },
             event.requestAttributes
-          )
-        : confirm(
+            );
+          }
+        );
+      }
+
+      if (restaurantName && rating)
+        return confirm(
             event.sessionState,
             outputSessionAttributes,
             {
               contentType: "PlainText",
-              content: `Shall I continue posting review for ${outputSessionAttributes["MenuItem"]} offered by ${outputSessionAttributes["RestaurantName"]}?`,
+            content: `Shall I continue posting rating ${rating} for ${outputSessionAttributes["RestaurantName"]}?`,
             },
             event.requestAttributes
           );
