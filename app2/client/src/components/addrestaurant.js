@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './addrestaurant.css';
+import Cookies from 'js-cookie';
+import LoginPage from './login';
+import RegisterPage from './register';
+import { useNavigate } from 'react-router-dom';
 
 const AddRestaurantPage = () => {
   // State variables
+  const navigate = useNavigate();
+
   const [status, setAvailability] = useState('open');
   const [open_hours, setOpeningHours] = useState('');
   const [close_hours, setClosingHours] = useState('');
@@ -15,8 +21,13 @@ const AddRestaurantPage = () => {
   const [restaurant_name, setRestaurantName] = useState('');
   const [phone, setPhone] = useState('');
   const [address_line, setAddressLine] = useState('');
+  const [userId, setUserId] = useState('');
 
   // Handler functions
+  useEffect(() => {
+    // Set userId from cookies when the component mounts
+    setUserId(Cookies.get('userId'));
+  }, []); 
 
   const handleAvailabilityChange = (e) => {
     setAvailability(e.target.value);
@@ -69,6 +80,13 @@ const AddRestaurantPage = () => {
 
   const handleAddressLineChange = (e) => {
     setAddressLine(e.target.value);
+  };
+  
+  const handleLogout = () => {
+    // Remove the token from cookies or state (depending on your implementation)
+    Cookies.remove('userId');
+    // Redirect to the login page or any other page after logout
+    navigate('/login');
   };
 
   const handleSubmit = async () => {
@@ -229,6 +247,8 @@ const AddRestaurantPage = () => {
         </ul>
       </div>
       <button onClick={handleSubmit}>Submit</button>
+
+      <button onClick={handleLogout}>Logout</button>
 
     </div>
     

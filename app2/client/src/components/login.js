@@ -12,13 +12,13 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   
-
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     try {
       const userCred = await signInWithEmailAndPassword(auth, userId, password);
       Cookies.set('userId', userCred._tokenResponse.email);
       navigate("/reservation");
+      navigate("/addrestaurant");
     } catch (error) {
       console.log(error);
       alert('Invalid credentials. Please try again.');
@@ -32,6 +32,8 @@ const LoginPage = () => {
     await signInWithPopup(auth, provider).then((userCred) => {
       Cookies.set('userId', userCred.user.email);
       navigate('/reservation');
+      navigate("/addrestaurant");
+
     }).catch((err) => {
       alert(err);
     })
