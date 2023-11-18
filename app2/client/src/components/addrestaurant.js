@@ -120,6 +120,7 @@ const AddRestaurantPage = () => {
       if (response.ok) {
         // Handle success, e.g., show a success message or redirect to another page
         console.log('Restaurant details added successfully');
+        navigate("/reservation")
       } else {
         // Handle errors, e.g., show an error message
         console.error('Failed to add restaurant details');
