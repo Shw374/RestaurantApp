@@ -28,10 +28,10 @@
         setUserId(Cookies.get('userId'));
         const fetchData = async () => {
         let postdata = {
-            "customer_id": "12345"
+            "body": "{\"customer_id\": \"12345\"}"
         }  
         try {
-            const response = await axios.post("https://35mb0dp42l.execute-api.us-east-1.amazonaws.com/prod/getallbookings/getallbookings", postdata);
+            const response = await axios.post("https://us-central1-disco-arcana-394001.cloudfunctions.net/reservationviewbycustomer", postdata);
             setDisplayData(response.data); // Assuming the data is in the "data" property of the response
         } catch (error) {
             if (error.response) {
