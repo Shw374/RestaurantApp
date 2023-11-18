@@ -3,21 +3,24 @@ import './addrestaurant.css';
 
 const AddRestaurantPage = () => {
   // State variables
-  const [availability, setAvailability] = useState('open');
-  const [openingHours, setOpeningHours] = useState('');
-  const [closingHours, setClosingHours] = useState('');
-  const [selectedCuisine, setSelectedCuisine] = useState('chinese');
-  const [tableCount, setTableCount] = useState(0);
-  const [tableSize, setTableSize] = useState(0);
-  const [menuItems, setMenuItems] = useState([]);
+  const [status, setAvailability] = useState('open');
+  const [open_hours, setOpeningHours] = useState('');
+  const [close_hours, setClosingHours] = useState('');
+  const [menu, setSelectedCuisine] = useState('chinese');
+  const [table_count, setTableCount] = useState(0);
+  const [table_size, setTableSize] = useState(0);
+  const [menu_items, setMenuItems] = useState([]);
   const [newItem, setNewItem] = useState({ name: '', price: '', quantity: '' });
-  const [restaurantId, setRestaurantId] = useState('');
+  const [restaurant_id, setRestaurantId] = useState('');
+  const [restaurant_name, setRestaurantName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address_line, setAddressLine] = useState('');
 
   // Handler functions
+
   const handleAvailabilityChange = (e) => {
     setAvailability(e.target.value);
-  };
-
+  }
   const handleOpeningHoursChange = (e) => {
     setOpeningHours(e.target.value);
   };
@@ -39,7 +42,7 @@ const AddRestaurantPage = () => {
   };
 
   const handleAddItem = () => {
-    setMenuItems([...menuItems, newItem]);
+    setMenuItems([...menu_items, newItem]);
     setNewItem({ name: '', price: '', quantity: '' });
   };
 
@@ -56,23 +59,43 @@ const AddRestaurantPage = () => {
     setRestaurantId(`R${timestamp}`);
   };
 
+  const handleRestaurantNameChange = (e) => {
+    setRestaurantName(e.target.value);
+  };
+
+  const handlePhoneChange = (e) => {
+    setPhone(e.target.value);
+  };
+
+  const handleAddressLineChange = (e) => {
+    setAddressLine(e.target.value);
+  };
+
   const handleSubmit = async () => {
     try {
-      const response = await fetch('https://ygkj588pcl.execute-api.us-east-1.amazonaws.com/dev/addrestaurant', {
+      const response = await fetch('https://cors-anywhere.herokuapp.com/https://ygkj588pcl.execute-api.us-east-1.amazonaws.com/dev/addrestaurant', {
         method: 'POST',
         headers: {
-          'origin': 'http://localhost:3000',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': 'http://localhost:3000'
         },
         body: JSON.stringify({
-          restaurantId,
-          availability,
-          openingHours,
-          closingHours,
-          selectedCuisine,
-          tableCount,
-          tableSize,
-          menuItems,
+          restaurant_id,
+          restaurant_name,
+          phone,
+          address_line,
+          status,
+          open_hours,
+          close_hours,
+          menu: {
+            [menu]: menu_items.map(item => ({
+              price: item.price,
+              menu_name: item.name,
+              quantity: item.quantity
+            }))
+          },
+          table_count,
+          table_size,
         }),
       });
 
@@ -94,7 +117,7 @@ const AddRestaurantPage = () => {
       <div>
         <label>
           Restaurant ID:
-          <input type="text" value={restaurantId} readOnly />
+          <input type="text" value={restaurant_id} readOnly />
           <button onClick={generateRestaurantId}>Generate ID</button>
         </label>
       </div>
@@ -105,55 +128,75 @@ const AddRestaurantPage = () => {
           <input
             type="radio"
             value="open"
-            checked={availability === 'open'}
+            checked={status === 'open'}
             onChange={handleAvailabilityChange}
           />
           Open
           <input
             type="radio"
             value="closed"
-            checked={availability === 'closed'}
+            checked={status === 'closed'}
             onChange={handleAvailabilityChange}
           />
           Closed
         </label>
       </div>
+      <div>
+        <label>
+          Restaurant Name:
+          <input type="text" value={restaurant_name} onChange={handleRestaurantNameChange} />
+        </label>
+      </div>
 
       <div>
         <label>
+          Phone Number:
+          <input type="number" value={phone} onChange={handlePhoneChange} />
+        </label>
+      </div>
+
+      <div>
+        <label>
+          Address Line:
+          <input type="text" value={address_line} onChange={handleAddressLineChange} />
+        </label>
+      </div>
+      <div>
+        <label>
           Opening Hours:
-          <input type="time" value={openingHours} onChange={handleOpeningHoursChange} />
+          <input type="time" value={open_hours} onChange={handleOpeningHoursChange} />
         </label>
       </div>
 
       <div>
         <label>
           Closing Hours:
-          <input type="time" value={closingHours} onChange={handleClosingHoursChange} />
+          <input type="time" value={close_hours} onChange={handleClosingHoursChange} />
         </label>
       </div>
 
       <div>
         <label>
           Number of Tables:
-          <input type="number" value={tableCount} onChange={handleTableCountChange} />
+          <input type="number" value={table_count} onChange={handleTableCountChange} />
         </label>
       </div>
 
       <div>
         <label>
           Table Size:
-          <input type="number" value={tableSize} onChange={handleTableSizeChange} />
+          <input type="number" value={table_size} onChange={handleTableSizeChange} />
         </label>
       </div>
 
       <div>
         <label>
           Choose Cuisine:
-          <select value={selectedCuisine} onChange={handleCuisineChange}>
+          <select value={menu} onChange={handleCuisineChange}>
             <option value="chinese">Chinese</option>
             <option value="italian">Italian</option>
-            {/* Add more cuisine options as needed */}
+            <option value="punjabi">Punjabi</option>
+            <option value="gujarati">Gujarati</option>
           </select>
         </label>
       </div>
@@ -176,9 +219,9 @@ const AddRestaurantPage = () => {
       </div>
 
       <div>
-        <h3>Menu</h3>
+        <h3>Selected Menu Items</h3>
         <ul>
-          {menuItems.map((item, index) => (
+          {menu_items.map((item, index) => (
             <li key={index}>
               {item.name} - ${item.price} - Quantity: {item.quantity}
             </li>
