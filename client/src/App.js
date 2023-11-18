@@ -2,7 +2,8 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./components/login.js";
 import RegisterPage from "./components/register.js";
-import Listrestaurants from "./components/listrestaurants.js";
+import Listrestaurants from './components/listrestaurants.js';
+import AddRestaurantPage from './components/addrestaurant.js';
 import Cookies from "js-cookie";
 
 function App() {
@@ -19,7 +20,8 @@ function App() {
     <Router>
       <Routes>
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/login" element={<LoginPage />} />            
+        <Route path="/login" element={<LoginPage />} />           
+        <Route path="/addrestaurant" element={<AddRestaurantPage/>}/> 
         {/* // Add all the pages below that are only accessible by Admin after successful login */}
         {isAdmin && <></>}
 

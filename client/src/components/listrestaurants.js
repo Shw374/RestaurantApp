@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import RegisterPage from './register';
 import LoginPage from './login';
+import './listrestaurant.css';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 
@@ -19,8 +20,8 @@ function Listrestaurants() {
     navigate('/login');
   };
 
-  const ListrestaurantAPI = {
-
+const ListrestaurantAPI = {
+  
   getAllRestaurants: async () => {
     try {
       const response = await fetch(`${API_ENDPOINT}/items`, {
@@ -45,6 +46,7 @@ function Listrestaurants() {
   },
 
 };
+
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
