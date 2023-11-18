@@ -11,6 +11,7 @@ const AddRestaurantPage = () => {
   const [tableSize, setTableSize] = useState(0);
   const [menuItems, setMenuItems] = useState([]);
   const [newItem, setNewItem] = useState({ name: '', price: '', quantity: '' });
+  const [restaurantId, setRestaurantId] = useState('');
 
   // Handler functions
   const handleAvailabilityChange = (e) => {
@@ -49,15 +50,22 @@ const AddRestaurantPage = () => {
     });
   };
 
+  const generateRestaurantId = () => {
+    // Generate restaurant ID based on current timestamp
+    const timestamp = new Date().getTime();
+    setRestaurantId(`R${timestamp}`);
+  };
+
   const handleSubmit = async () => {
     try {
       const response = await fetch('https://ygkj588pcl.execute-api.us-east-1.amazonaws.com/dev/addrestaurant', {
         method: 'POST',
         headers: {
-          'origin': 'http://localhost:3001',
+          'origin': 'http://localhost:3000',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+          restaurantId,
           availability,
           openingHours,
           closingHours,
@@ -83,6 +91,14 @@ const AddRestaurantPage = () => {
   return (
     <div>
         <h2> Add Restaurant Details </h2>
+      <div>
+        <label>
+          Restaurant ID:
+          <input type="text" value={restaurantId} readOnly />
+          <button onClick={generateRestaurantId}>Generate ID</button>
+        </label>
+      </div>
+      
       <div>
         <label>
           Availability:
