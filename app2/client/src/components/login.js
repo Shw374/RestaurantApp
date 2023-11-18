@@ -18,8 +18,7 @@ const LoginPage = () => {
     try {
       const userCred = await signInWithEmailAndPassword(auth, userId, password);
       Cookies.set('userId', userCred._tokenResponse.email);
-      navigate("/register");
-      alert("Loginned")
+      navigate("/reservation");
     } catch (error) {
       console.log(error);
       alert('Invalid credentials. Please try again.');
@@ -32,7 +31,7 @@ const LoginPage = () => {
     const provider = new GoogleAuthProvider();
     await signInWithPopup(auth, provider).then((userCred) => {
       Cookies.set('userId', userCred.user.email);
-      navigate('/register');
+      navigate('/reservation');
     }).catch((err) => {
       alert(err);
     })
