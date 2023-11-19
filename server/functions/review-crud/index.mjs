@@ -1,4 +1,4 @@
-import {getItem, getAllItems, putItem, deleteItem} from "./ddb.helper.mjs";
+import { getItem, getAllItems, putItem, deleteItem } from "./ddb.helper.mjs";
 export const handler = async (event, context) => {
   let body;
   let statusCode = 200;
@@ -16,6 +16,10 @@ export const handler = async (event, context) => {
       case "GET /reviews":
         dbResponse = await getAllItems();
         body = { reviews: dbResponse.Item || [], count: dbResponse.Count };
+        break;
+      case "GET /reviews/rest/{id}":
+        dbResponse = await getItemByRestaurant(event.pathParameters.id);
+        body = { review: dbResponse?.Items || [], count: dbResponse?.Count };
         break;
       case "PUT /reviews":
         let req = JSON.parse(event.body);

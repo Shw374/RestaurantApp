@@ -1,16 +1,28 @@
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-import { close, confirm, delegate, validateConfirmation } from "./utils.mjs";
+import {
+  close,
+  confirm,
+  elicitSlot,
+  delegate,
+  validateConfirmation,
+} from "./utils.mjs";
+import { getReview } from "./services/reviews.mjs";
 
 export const handler = async (event, context) => {
   const slotName = Object.keys(event.sessionState.intent.slots);
 
+  console.log("slotName", slotName);
   const outputSessionAttributes = event.sessionState.sessionAttributes || {};
 
+  console.log("outputSessionAttributes", outputSessionAttributes);
+
   if (event.sessionState.intent.name === "GetRestaurantReviews") {
-    var showMoreReviews = event.currentIntent.slots.ShowMoreReviews;
+    console.log("Slot: GetRestaurantReviews");
+    var showMoreReviews =
+      event.sessionState.intent.slots.ShowMoreReviews?.value?.interpretedValue;
     var currentPage =
-      (event.sessionAttributes && event.sessionAttributes.CurrentReviewPage) ||
+      (event.sessionState.sessionAttributes && event.sessionState.sessionAttributes.CurrentReviewPage) ||
       1;
 
     if (showMoreReviews) {
@@ -18,7 +30,23 @@ export const handler = async (event, context) => {
       outputSessionAttributes["CurrentReviewPage"] = currentPage;
     }
     // API call for fetching reviews for restaurant based on offset
-
+    const response = await getReview(currentPage, {
+      id: "1",
+    });
+    
+    const reviews = ["It was an amazing experience", "Dining experience was nice", "Italian, especially, pasta is nice",  "Indian pavbhaji was never I've had before", "Just wow!!"]
+    for (let index = 0; index < 5; index++) {
+      close(
+        event.sessionState,
+        "Fulfilled",
+        outputSessionAttributes,
+        {
+          contentType: "PlainText",
+          content: `${reviews[index]}`,
+        },
+        event.requestAttributes
+      )
+    }
     return event.sessionState.intent.confirmationState === "Confirmed"
       ? close(
           event.sessionState,
@@ -26,7 +54,7 @@ export const handler = async (event, context) => {
           outputSessionAttributes,
           {
             contentType: "PlainText",
-            content: `Delight Dine's has following reviews.`,
+            content: `Delight Dine's had following reviews.`,
           },
           event.requestAttributes
         )
@@ -99,7 +127,6 @@ export const handler = async (event, context) => {
           event.requestAttributes
         );
   }
-
   return delegate(
     event.sessionState,
     outputSessionAttributes,
