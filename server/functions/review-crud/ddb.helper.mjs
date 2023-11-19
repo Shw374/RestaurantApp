@@ -5,6 +5,7 @@ import {
   ScanCommand,
   PutCommand,
   DeleteCommand,
+  ExecuteStatementCommand,
 } from "@aws-sdk/lib-dynamodb";
 
 const client = new DynamoDBClient({ region: "us-east-1" });
@@ -36,6 +37,18 @@ export const getItem = async (id) => {
 export const getAllItems = async () => {
   const getCommand = new ScanCommand({
     TableName: tableName,
+  });
+  const getResponse = await ddbDocClient.send(getCommand);
+
+  console.log("reponse", getResponse);
+};
+
+export const getItemByRestaurant = async (id) => {
+  const getCommand = new ExecuteStatementCommand({
+    Statement: `SELECT * FROM ${tableName} WHERE id=? AND type=?`,
+    Parameters: [`${id}`, "RESTAURANT"],
+    ConsistentRead: true,
+
   });
   const getResponse = await ddbDocClient.send(getCommand);
 
