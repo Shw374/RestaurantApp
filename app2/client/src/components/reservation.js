@@ -84,17 +84,11 @@
                                     })}
                                 </p>
                             </div>
-                            <button style={{ marginRight: '8px', padding: '8px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px' }}> 
-                                    Approve
-                                </button>
-                                
-                                <button style={{ marginRight: '8px', padding: '8px', backgroundColor: '#FF6347', color: 'white', border: 'none', borderRadius: '4px' }}> 
-                                    Reject
-                                </button>
-                                <button style={{ padding: '8px', backgroundColor: '#4682B4', color: 'white', border: 'none', borderRadius: '4px' }}> 
-                                    Edit
-                                </button>
-                                <br/>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px' }}>
+                        <button style={{ marginRight: '8px', backgroundColor: 'green', fontSize: '12px' }}>Approve</button>
+                        <button style={{ marginRight: '8px', backgroundColor: 'red', fontSize: '12px' }}>Reject</button>
+                        <button style={{ marginRight: '8px', backgroundColor: 'blue', fontSize: '12px' }}>Edit</button>
+                            </div>
                             {/* Additional details and buttons */}
                         </div>
                     ))}
