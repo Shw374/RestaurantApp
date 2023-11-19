@@ -15,7 +15,7 @@ def lambda_handler(event, context):
             customer_id = record['dynamodb']['NewImage']['customer_id']['S']
             
             subject = f'Reservation Added with menu'
-            message = f'New Reservation: from {customer_id}. Menu Items added: {menu_items}.'
+            message = f'New Reservation: from {customer_id}.'
             
             # Send SNS notification
             send_sns(message, subject)
