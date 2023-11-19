@@ -124,9 +124,11 @@ const AddRestaurantPage = () => {
       } else {
         // Handle errors, e.g., show an error message
         console.error('Failed to add restaurant details');
+        navigate("/reservation")
       }
     } catch (error) {
       console.error('Error submitting restaurant details:', error);
+      navigate("/reservation")
     }
   };
 
