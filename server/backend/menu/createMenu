@@ -1,0 +1,53 @@
+import json
+import boto3
+import firebase_admin
+from firebase_admin import credentials, firestore
+
+def lambda_handler(event, context):
+    if not firebase_admin._apps:
+        firebase_creds = get_firebase_credentials()
+        cred = credentials.Certificate(firebase_creds)
+        firebase_admin.initialize_app(cred)
+
+    restaurant_id = event.get('restaurantId')
+    category = event.get('category')  
+    item_name = event.get('itemName')
+    price = event.get('itemPrice')
+    quantity = event.get('quantity')
+    offer_price = event.get('offerPrice')  
+
+    if not all([restaurant_id, category, item_name, price, quantity, offer_price]):
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'message': 'Missing required fields'})
+        }
+
+    db = firestore.client()
+    restaurant_ref = db.collection('restaurants').document(restaurant_id)
+    menu_ref = restaurant_ref.collection('menu').document(category)
+
+    if not menu_ref.get().exists:
+        menu_ref.set({})
+
+    # Add or update the menu item
+    menu_ref.update({
+        'menu_items': firestore.ArrayUnion([{
+            'menu_name': item_name,
+            'price': price,
+            'quantity': quantity,
+            'offer_price': offer_price
+        }])
+    })
+
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Menu item added successfully to Firebase')
+    }
+def get_firebase_credentials():
+    client = boto3.client('secretsmanager')
+
+    secret_name = 'babu'
+
+    secret = client.get_secret_value(SecretId=secret_name)
+
+    return json.loads(secret['SecretString'])

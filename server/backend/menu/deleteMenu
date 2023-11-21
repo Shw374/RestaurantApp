@@ -1,0 +1,55 @@
+import json
+import boto3
+import firebase_admin
+from firebase_admin import credentials, firestore
+
+def get_firebase_credentials():
+    client = boto3.client('secretsmanager')
+
+    secret_name = 'babu'
+
+    secret = client.get_secret_value(SecretId=secret_name)
+
+    return json.loads(secret['SecretString'])
+
+def lambda_handler(event, context):
+    if not firebase_admin._apps:
+        firebase_creds = get_firebase_credentials()
+        cred = credentials.Certificate(firebase_creds)
+        firebase_admin.initialize_app(cred)
+
+    restaurant_id = event.get('restaurantId')
+    category = event.get('category')  
+    item_name = event.get('itemName')
+
+    if not all([restaurant_id, category, item_name]):
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'message': 'Missing required fields'})
+        }
+
+    db = firestore.client()
+    restaurant_ref = db.collection('restaurants').document(restaurant_id)
+    menu_ref = restaurant_ref.collection('menu').document(category)
+
+    menu_data = menu_ref.get().to_dict()
+    if menu_data and 'menu_items' in menu_data:
+        updated_items = [item for item in menu_data['menu_items'] if item['menu_name'] != item_name]
+
+        if len(updated_items) == len(menu_data['menu_items']):
+            return {
+                'statusCode': 404,
+                'body': json.dumps({'message': 'Item not found'})
+            }
+
+        menu_ref.update({'menu_items': updated_items})
+
+        return {
+            'statusCode': 200,
+            'body': json.dumps('Menu item deleted successfully from Firebase')
+        }
+    else:
+        return {
+            'statusCode': 404,
+            'body': json.dumps({'message': 'Category or menu not found'})
+        }
