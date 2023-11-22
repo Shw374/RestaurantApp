@@ -1,90 +1,42 @@
 import json
 import boto3
-from datetime import datetime
+import firebase_admin
+from firebase_admin import credentials, firestore
 
-dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('Reservations')
-ARN = "arn:aws:execute-api:us-east-1:728932281340:wyz7695tcf/*/POST/updatetable"
-
-# {
-#   "body": "{\"reservationId\": \"res12345\", \"customer_id\": \"cust123\", \"restaurantId\": \"rest123\", \"start_time\": \"6am\", \"end_time\": \"7am\"}"
-# }
-
-def find_conflicts(restaurantId, start_time, end_time, exclude_reservation_id=None):
-    response = table.query(
-        IndexName='restaurantId-startTime-index',  
-        KeyConditionExpression='restaurantId = :restaurantId AND startTime BETWEEN :start_time AND :end_time',
-        ExpressionAttributeValues={
-            ':restaurantId': restaurantId,
-            ':start_time': start_time,
-            ':end_time': end_time
-        }
-    )
-    conflicts = []
-    for item in response['Items']:
-        if exclude_reservation_id and item['reservationId'] == exclude_reservation_id:
-            continue
-        conflicts.append(item['tableNumber'])
-    return conflicts
-
-def assign_new_table(restaurantId, start_time, end_time, exclude_reservation_id):
-    conflicts = find_conflicts(restaurantId, start_time, end_time, exclude_reservation_id)
-    for table_number in range(1, 21):
-        if table_number not in conflicts:
-            return table_number
-    return None
+def get_firebase_credentials():
+    client = boto3.client('secretsmanager')
+    secret_name = 'babu'  
+    secret = client.get_secret_value(SecretId=secret_name)
+    return json.loads(secret['SecretString'])
 
 def lambda_handler(event, context):
-    try:
-        request_body = json.loads(event['body'])
-        reservation_id = request_body['reservationId']
-        customer_id = request_body['customer_id']
-        restaurantId = request_body['restaurantId']
-        start_time = request_body['start_time']
-        end_time = request_body['end_time']
+    if not firebase_admin._apps:
+        firebase_creds = get_firebase_credentials()
+        cred = credentials.Certificate(firebase_creds)
+        firebase_admin.initialize_app(cred)
 
-        response = table.get_item(
-            Key={
-                'reservationId': reservation_id
-            }
-        )
-        reservation = response.get('Item')
-        if not reservation:
-            return {
-                'statusCode': 404,
-                'body': json.dumps({
-                    'message': 'Reservation not found.'
-                })
-            }
-        
-        new_table_number = assign_new_table(restaurantId, start_time, end_time, reservation_id)
-        if not new_table_number:
-            return {
-                'statusCode': 409,
-                'body': json.dumps({
-                    'message': 'No available tables for the selected time slot.'
-                })
-            }
+    db = firestore.client()
 
-        reservation['customer_id'] = customer_id
-        reservation['start_time'] = start_time
-        reservation['end_time'] = end_time
-        reservation['tableNumber'] = new_table_number
+    reservation_id = event.get('reservation_id')  
+    update_data = {
+        'customer_id': event.get('customer_id'),
+        'restaurantId': event.get('restaurantId'),
+        'start_time': event.get('start_time'),
+        'end_time': event.get('end_time'),
+        'reservationDate': event.get('reservationDate'),
+        'status': event.get('status'),
+        'total_no_people': event.get('total_no_people'),
+        'order': event.get('order')
+    }
 
-        table.put_item(Item=reservation)
+    if not all([reservation_id, update_data['customer_id'], update_data['restaurantId'], update_data['start_time'], update_data['end_time'], update_data['reservationDate'], update_data['status'], update_data['total_no_people'], update_data['order']]):
+        return {'statusCode': 400, 'body': json.dumps({'message': 'Missing required fields'})}
 
-        return {
-            'statusCode': 200,
-            'body': json.dumps({
-                'message': 'Reservation updated successfully!',
-                'reservation': reservation
-            })
-        }
+    reservation_ref = db.collection('reservations').document(reservation_id)
 
-    except Exception as e:
-        print(f"Error processing request: {e}")
-        return {
-            'statusCode': 500,
-            'body': json.dumps({'message': 'Internal Server Error'})
-        }
+    if not reservation_ref.get().exists:
+        return {'statusCode': 404, 'body': json.dumps({'message': 'Reservation not found'})}
 
+    reservation_ref.update(update_data)
+
+    return {'statusCode': 200, 'body': json.dumps({'message': 'Reservation updated successfully'})}

@@ -5,11 +5,8 @@ from firebase_admin import credentials, firestore
 
 def get_firebase_credentials():
     client = boto3.client('secretsmanager')
-
-    secret_name = 'babu'
-
+    secret_name = 'babu'  
     secret = client.get_secret_value(SecretId=secret_name)
-
     return json.loads(secret['SecretString'])
 
 def lambda_handler(event, context):
@@ -18,54 +15,22 @@ def lambda_handler(event, context):
         cred = credentials.Certificate(firebase_creds)
         firebase_admin.initialize_app(cred)
 
-    restaurant_id = event.get('restaurantId')
-    category = event.get('category')  
-    item_name = event.get('itemName')
-    price = event.get('itemPrice')
-    quantity = event.get('quantity')
-    offer_price = event.get('offerPrice')
-
-    if not all([restaurant_id, category, item_name, price, quantity, offer_price]):
-        return {
-            'statusCode': 400,
-            'body': json.dumps({'message': 'Missing required fields'})
-        }
-
     db = firestore.client()
+
+    # Extracting data from the event
+    restaurant_id = event.get('restaurant_id')
+    cuisine = event.get('cuisine')  
+    menu_item = event.get('menu_item') 
+
+    if not all([restaurant_id, cuisine, menu_item]):
+        return {'statusCode': 400, 'body': json.dumps({'message': 'Missing required fields'})}
+
     restaurant_ref = db.collection('restaurants').document(restaurant_id)
-    menu_ref = restaurant_ref.collection('menu').document(category)
 
+    if not restaurant_ref.get().exists:
+        return {'statusCode': 404, 'body': json.dumps({'message': 'Restaurant not found'})}
 
-    menu_data = menu_ref.get().to_dict()
-    if menu_data and 'menu_items' in menu_data:
-        updated_items = []
-        item_updated = False
-        for item in menu_data['menu_items']:
-            if item['menu_name'] == item_name:
-                updated_items.append({
-                    'menu_name': item_name,
-                    'price': price,
-                    'quantity': quantity,
-                    'offer_price': offer_price
-                })
-                item_updated = True
-            else:
-                updated_items.append(item)
+    menu_update = {f'menu.{cuisine}': firestore.ArrayUnion([menu_item])}
+    restaurant_ref.update(menu_update)
 
-        if not item_updated:
-            return {
-                'statusCode': 404,
-                'body': json.dumps({'message': 'Item not found'})
-            }
-
-        menu_ref.update({'menu_items': updated_items})
-
-        return {
-            'statusCode': 200,
-            'body': json.dumps('Menu item updated successfully in Firebase')
-        }
-    else:
-        return {
-            'statusCode': 404,
-            'body': json.dumps({'message': 'Category or item not found'})
-        }
+    return {'statusCode': 200, 'body': json.dumps({'message': 'Menu item updated successfully'})}

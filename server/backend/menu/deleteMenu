@@ -5,11 +5,8 @@ from firebase_admin import credentials, firestore
 
 def get_firebase_credentials():
     client = boto3.client('secretsmanager')
-
-    secret_name = 'babu'
-
+    secret_name = 'babu'  
     secret = client.get_secret_value(SecretId=secret_name)
-
     return json.loads(secret['SecretString'])
 
 def lambda_handler(event, context):
@@ -18,38 +15,24 @@ def lambda_handler(event, context):
         cred = credentials.Certificate(firebase_creds)
         firebase_admin.initialize_app(cred)
 
-    restaurant_id = event.get('restaurantId')
-    category = event.get('category')  
-    item_name = event.get('itemName')
-
-    if not all([restaurant_id, category, item_name]):
-        return {
-            'statusCode': 400,
-            'body': json.dumps({'message': 'Missing required fields'})
-        }
-
     db = firestore.client()
+
+    restaurant_id = event.get('restaurant_id')
+    cuisine = event.get('cuisine')  
+    menu_name = event.get('menu_name')  
+
+    if not all([restaurant_id, cuisine, menu_name]):
+        return {'statusCode': 400, 'body': json.dumps({'message': 'Missing required fields'})}
+
     restaurant_ref = db.collection('restaurants').document(restaurant_id)
-    menu_ref = restaurant_ref.collection('menu').document(category)
 
-    menu_data = menu_ref.get().to_dict()
-    if menu_data and 'menu_items' in menu_data:
-        updated_items = [item for item in menu_data['menu_items'] if item['menu_name'] != item_name]
+    restaurant_doc = restaurant_ref.get()
+    if not restaurant_doc.exists:
+        return {'statusCode': 404, 'body': json.dumps({'message': 'Restaurant not found'})}
 
-        if len(updated_items) == len(menu_data['menu_items']):
-            return {
-                'statusCode': 404,
-                'body': json.dumps({'message': 'Item not found'})
-            }
+    menu_items = restaurant_doc.to_dict().get('menu', {}).get(cuisine, [])
+    updated_menu_items = [item for item in menu_items if item['menu_name'] != menu_name]
 
-        menu_ref.update({'menu_items': updated_items})
+    restaurant_ref.update({f'menu.{cuisine}': updated_menu_items})
 
-        return {
-            'statusCode': 200,
-            'body': json.dumps('Menu item deleted successfully from Firebase')
-        }
-    else:
-        return {
-            'statusCode': 404,
-            'body': json.dumps({'message': 'Category or menu not found'})
-        }
+    return {'statusCode': 200, 'body': json.dumps({'message': 'Menu item deleted successfully'})}

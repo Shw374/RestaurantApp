@@ -1,53 +1,33 @@
 import json
 import boto3
-from decimal import Decimal
-from boto3.dynamodb.conditions import Key
+import firebase_admin
+from firebase_admin import credentials, firestore
 
-dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('Reservations')
-ARN = "arn:aws:execute-api:us-east-1:728932281340:35mb0dp42l/*/POST/getallbookings"
-
-# {
-#   "queryStringParameters": {
-#     "customer_id": "customer123"
-#   }
-# }
-
-class DecimalEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Decimal):
-            return float(obj)  
-        return super(DecimalEncoder, self).default(obj)
+def get_firebase_credentials():
+    client = boto3.client('secretsmanager')
+    secret_name = 'babu'  
+    secret = client.get_secret_value(SecretId=secret_name)
+    return json.loads(secret['SecretString'])
 
 def lambda_handler(event, context):
-    try:
-        customer_id = event.get('queryStringParameters', {}).get('customer_id')
+    if not firebase_admin._apps:
+        firebase_creds = get_firebase_credentials()
+        cred = credentials.Certificate(firebase_creds)
+        firebase_admin.initialize_app(cred)
 
-        if not customer_id:
-            return {
-                'statusCode': 400,
-                'body': json.dumps({'message': 'customer_id query parameter is required.'})
-            }
+    db = firestore.client()
 
-        response = table.query(
-            IndexName='customer_id-index',  
-            KeyConditionExpression=Key('customer_id').eq(customer_id)
-        )
+    customer_id = event.get('customer_id')
+    if not customer_id:
+        return {'statusCode': 400, 'body': json.dumps({'message': 'customer_id is required'})}
 
-        if 'Items' not in response or not response['Items']:
-            return {
-                'statusCode': 404,
-                'body': json.dumps({'message': 'No reservations found for the provided customer_id.'})
-            }
+    reservations_query = db.collection('reservations').where('customer_id', '==', customer_id).stream()
 
-        return {
-            'statusCode': 200,
-            'body': json.dumps(response['Items'], cls=DecimalEncoder)
-        }
+    reservations = []
+    for reservation in reservations_query:
+        reservations.append(reservation.to_dict())
 
-    except Exception as e:
-        print(f"Error processing request: {e}")
-        return {
-            'statusCode': 500,
-            'body': json.dumps({'message': 'Internal Server Error'})
-        }
+    return {
+        'statusCode': 200,
+        'body': json.dumps({'reservations': reservations})
+    }
