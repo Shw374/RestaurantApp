@@ -22,7 +22,7 @@ def check_table_availability(db, restaurantId, start_time, end_time):
     for table_number in range(1, 21):  
         if table_number not in occupied_tables:
             return table_number
-    return None  # No table available
+    return {'statusCode': 410, 'body': json.dumps({'message': 'No tables available'})}  
 
 def check_duplicate_reservation(db, reservation_data):
     # Check for existing reservation with the same details
