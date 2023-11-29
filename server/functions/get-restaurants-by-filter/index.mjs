@@ -14,7 +14,7 @@ export const handler = async (event, context) => {
   console.log("event", event);
   try {
     switch (event.routeKey) {
-      case "POST /details":
+      case "POST /restaurant/details":
         const eventBody = JSON.parse(event.body);
         if (eventBody?.restaurant_name && eventBody?.address_line) {
           dbResponse = await getRestaurantByNameAndAddress(
