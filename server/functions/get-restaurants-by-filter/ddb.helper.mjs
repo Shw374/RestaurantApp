@@ -10,7 +10,7 @@ const tableName = "Restaurant";
 
 export const getRestaurantByName = async (restaurantName) => {
   const selectItemStatementCommand = new ExecuteStatementCommand({
-    Statement: `SELECT * FROM ${tableName} WHERE name=?`,
+    Statement: `SELECT * FROM ${tableName} WHERE restaurant_name= ?`,
     Parameters: [`${restaurantName}`],
     ConsistentRead: true,
   });
@@ -37,7 +37,7 @@ export const getRestaurantByNameAndAddress = async (
   addressLine
 ) => {
   const selectItemStatementCommand = new ExecuteStatementCommand({
-    Statement: `SELECT * FROM ${tableName} WHERE name=? AND contains(address_line, ?)`,
+    Statement: `SELECT * FROM ${tableName} WHERE restaurant_name= ? AND contains(address_line, ?)`,
     Parameters: [`${restaurantName}`, `${addressLine}`],
     ConsistentRead: true,
   });
