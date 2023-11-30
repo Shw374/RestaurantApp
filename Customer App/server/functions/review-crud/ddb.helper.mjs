@@ -19,28 +19,31 @@ export const putItem = async (item) => {
   });
   const response = await ddbDocClient.send(putCommand);
   console.log("put response", response);
+  return response;
 };
 
 export const getItem = async (id) => {
   const getCommand = new GetCommand({
     TableName: tableName,
     Key: {
-      id,
+      review_id: id,
     },
     ConsistentRead: true,
   });
-  const getResponse = await ddbDocClient.send(getCommand);
+  const response = await ddbDocClient.send(getCommand);
 
-  console.log("reponse", getResponse);
+  console.log("reponse", response);
+  return response;
 };
 
 export const getAllItems = async () => {
   const getCommand = new ScanCommand({
     TableName: tableName,
   });
-  const getResponse = await ddbDocClient.send(getCommand);
+  const response = await ddbDocClient.send(getCommand);
 
-  console.log("reponse", getResponse);
+  console.log("reponse", response);
+  return response;
 };
 
 export const getItemByRestaurant = async (id) => {
@@ -48,11 +51,11 @@ export const getItemByRestaurant = async (id) => {
     Statement: `SELECT * FROM ${tableName} WHERE id=? AND type=?`,
     Parameters: [`${id}`, "RESTAURANT"],
     ConsistentRead: true,
-
   });
-  const getResponse = await ddbDocClient.send(getCommand);
+  const response = await ddbDocClient.send(getCommand);
 
-  console.log("reponse", getResponse);
+  console.log("reponse", response);
+  return response;
 };
 
 export const deleteItem = async (item) => {
@@ -62,6 +65,5 @@ export const deleteItem = async (item) => {
   });
   const response = await client.send(deleteCommand);
   console.log("delete response", response);
+  return response;
 };
-
-// module.exports = { putItem, getItem, getAllItems, deleteItem };
