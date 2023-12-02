@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./components/login.js";
 import RegisterPage from "./components/register.js";
 import Cookies from "js-cookie";
-import Listrestaurants from "./components/listrestaurant.js";
+import Listrestaurants from "./components/listrestaurants.js";
 import ReservationPage from "./components/reservationpage.js";
 
 function App() {
