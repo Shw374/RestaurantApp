@@ -6,7 +6,7 @@ from firebase_admin import credentials, firestore
 def get_firebase_credentials():
     # Create a Secrets Manager client
     client = boto3.client('secretsmanager')
-    secret_name = 'babu'  # Replace with your secret name
+    secret_name = 'babu'  
     secret = client.get_secret_value(SecretId=secret_name)
     return json.loads(secret['SecretString'])
 
