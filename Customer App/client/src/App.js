@@ -2,8 +2,9 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./components/login.js";
 import RegisterPage from "./components/register.js";
-import Listrestaurants from './components/listrestaurants.js';
 import Cookies from "js-cookie";
+import Listrestaurants from "./components/listrestaurants.js";
+import ReservationPage from "./components/reservationpage.js";
 
 function App() {
   // get userId from cookies each page where you're required to send to server
@@ -30,6 +31,7 @@ function App() {
         {userId && (
           <>
             <Route path="/listrestaurant" element={<Listrestaurants />} />
+            <Route path="/reservation" element={<ReservationPage />} />
           </>
         )}
         <Route path="/*" element={<LoginPage />} />
