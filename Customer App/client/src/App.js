@@ -5,6 +5,7 @@ import RegisterPage from "./components/register.js";
 import Cookies from "js-cookie";
 import Listrestaurants from "./components/listrestaurants.js";
 import ReservationPage from "./components/reservationpage.js";
+import LookerEmbed from "./components/looker_embed.js";
 
 function App() {
   // get userId from cookies each page where you're required to send to server
@@ -20,7 +21,8 @@ function App() {
     <Router>
       <Routes>
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/login" element={<LoginPage />} />           
+        <Route path="/login" element={<LoginPage />} />          
+        <Route path="/looker_1" element= {<LookerEmbed />} />
         {/* // Add all the pages below that are only accessible by Admin after successful login */}
         {isAdmin && <></>}
 

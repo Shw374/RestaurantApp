@@ -55,3 +55,24 @@ deploy_app2:
       - main
     changes:
       - "Partner App/client/**/*" 
+
+build_app3:
+  stage: build
+  script:
+    - cd Admin\ App/client
+    - gcloud builds submit --tag gcr.io/$PROJECT_ID/$SERVICE_ID_APP3
+  only:
+    refs:
+      - main
+    changes:
+      - "Admin App/client/**/*" 
+
+deploy_app3:
+  stage: deploy
+  script:
+    - gcloud run deploy $SERVICE_ID_APP3 --image gcr.io/$PROJECT_ID/$SERVICE_ID_APP3 --region=us-central1 --platform managed --allow-unauthenticated
+  only:
+    refs:
+      - main
+    changes:
+      - "Admin App/client/**/*"
