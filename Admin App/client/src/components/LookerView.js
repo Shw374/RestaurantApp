@@ -10,7 +10,7 @@ const LookerView = () => {
       <iframe
         width="100%"
         height="100%"
-        src="https://lookerstudio.google.com/embed/reporting/32f2f881-ab02-4485-8459-0db54e1afcaf/page/tEnnC"
+        src={url}
         style={{
           position: "absolute",
           top: 0,
