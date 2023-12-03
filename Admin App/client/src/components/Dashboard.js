@@ -33,9 +33,9 @@ const Dashboard = () => {
             <DashboardCard
               title="Order Peaks"
               subtitle="The top 10 periods when the food is most ordered"
-              imageName=""
-              lookerUrl=""
-              linkPath=""
+              imageName="Post-Image-Fasting.png"
+              lookerUrl="https://lookerstudio.google.com/reporting/6333f097-ff80-4f22-822f-4dbd868a9247"
+              linkPath="order-peaks"
             />
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
