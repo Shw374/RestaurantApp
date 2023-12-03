@@ -4,10 +4,12 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Kommunicate from "@kommunicate/kommunicate-chatbot-plugin";
+import Cookies from 'js-cookie';
 
 Kommunicate.init("ceec0bdfcc3c76649fe62fd1759d2242", {
   automaticChatOpenOnNavigation: true,
-  popupWidget: false
+  popupWidget: false,
+  userId: Cookies.get("userId"),
 });
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
