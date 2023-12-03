@@ -1,7 +1,10 @@
 import React from "react";
 import { Grid, Container, Typography } from "@mui/material";
 import "./Dashboard.css";
+<<<<<<< HEAD
 
+=======
+>>>>>>> bf1161f277e196a63b882abdbfbb18b25d41114d
 import DashboardCard from "./DashboardCard";
 
 const Dashboard = () => {
