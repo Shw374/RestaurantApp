@@ -15,9 +15,9 @@ const Dashboard = () => {
             <DashboardCard
               title="Top 10 Order Titans"
               subtitle="The top 10 restaurants that have the most orders"
-              imageName=""
-              lookerUrl=""
-              linkPath=""
+              imageName="food_orders.jpg"
+              lookerUrl="https://lookerstudio.google.com/embed/reporting/de639c95-4d25-45dd-b559-b822644cc152/page/tEnnC"
+              linkPath="foodorders"
             />
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
