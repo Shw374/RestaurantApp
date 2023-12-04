@@ -1,9 +1,10 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation,useNavigate } from 'react-router-dom';
 import './reservationpage.css'
 
 const ReservationPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   if (!location || !location.state) {
     // Handle the case when there's no data or navigate to another page
@@ -17,9 +18,16 @@ const ReservationPage = () => {
     return <p className="no-data-message">No data available for reservation.</p>;
   }
 
+  // Function to navigate to the booking page with restaurant ID
+  const navigateToBooking = () => {
+    const path = `/booking/${restaurantData.restaurantId}`; // Assuming 'restaurantData' has an 'id' field
+    navigate(path);
+  };
+
   return (
     <div className="reservation-container">
       <h2>Continue to reserve</h2>
+      <p className="property">RestaurantId {restaurantData.restaurantId}</p>
       <p className="property">Title: {restaurantData.title}</p>
       {restaurantData.openHours && <p className="property">Open Hours: {restaurantData.openHours}</p>}
       {restaurantData.closeHours && <p className="property">Close Hours: {restaurantData.closeHours}</p>}
@@ -50,6 +58,7 @@ const ReservationPage = () => {
           ))}
         </div>
       )}
+      <button onClick={navigateToBooking}>Book Now</button>
     </div>
   );
 };

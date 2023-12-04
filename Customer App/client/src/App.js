@@ -5,6 +5,7 @@ import RegisterPage from "./components/register.js";
 import Cookies from "js-cookie";
 import Listrestaurants from "./components/listrestaurants.js";
 import ReservationPage from "./components/reservationpage.js";
+import BookingForm from "./components/booking.js";
 
 function App() {
   // get userId from cookies each page where you're required to send to server
@@ -32,6 +33,7 @@ function App() {
           <>
             <Route path="/listrestaurant" element={<Listrestaurants />} />
             <Route path="/reservation" element={<ReservationPage />} />
+            <Route path="/booking/:restaurantId" element={<BookingForm userId={userId} />} />
           </>
         )}
         <Route path="/*" element={<LoginPage />} />

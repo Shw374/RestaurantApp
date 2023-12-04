@@ -60,6 +60,7 @@ function Listrestaurants() {
             {restaurants.map((restaurant) => (
               <p key={restaurant.restaurant_id}>
                 <AccordionItem
+                  restaurantId={restaurant.restaurant_id} 
                   title={restaurant.restaurant_name}
                   openHours={restaurant.open_hours}
                   closeHours={restaurant.close_hours}
@@ -78,7 +79,7 @@ function Listrestaurants() {
     );
   }
   
-  const AccordionItem = ({ title, openHours, closeHours, address, phone, status, menu }) => {
+  const AccordionItem = ({ restaurantId, title, openHours, closeHours, address, phone, status, menu }) => {
     const [isOpen, setIsOpen] = useState(false);
   
     const toggleAccordion = () => {
@@ -101,6 +102,8 @@ function Listrestaurants() {
         </div>
         {isOpen && (
           <div className="accordion-content">
+            {restaurantId && <p>RestaurantId {restaurantId}</p>}
+            {title && <p> Title{title}</p>}
             {openHours && <p>Open Hours: {openHours}</p>}
             {closeHours && <p>Close Hours: {closeHours}</p>}
             {address && <p>Address: {address}</p>}
@@ -127,7 +130,7 @@ function Listrestaurants() {
               </div>
             )}
             
-            <button onClick={() => onReserveClick({ title, openHours, closeHours, address, phone, status, menu })}>
+            <button onClick={() => onReserveClick({ restaurantId, title, openHours, closeHours, address, phone, status, menu })}>
             Reserve </button>
           </div>
         )}
