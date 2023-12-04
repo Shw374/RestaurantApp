@@ -42,9 +42,9 @@ const Dashboard = () => {
             <DashboardCard
               title="Top 10 Order Royalty"
               subtitle="The top 10 customers who have ordered the most"
-              imageName=""
-              lookerUrl=""
-              linkPath=""
+              imageName="family.jpeg"
+              lookerUrl="https://lookerstudio.google.com/embed/reporting/9c653fed-ddd5-4721-b4b3-2d329b6a13f6/page/VD9jD"
+              linkPath="topcustomer"
             />
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
