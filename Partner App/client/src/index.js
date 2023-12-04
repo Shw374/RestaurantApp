@@ -5,7 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import Kommunicate from "@kommunicate/kommunicate-chatbot-plugin";
 
-Kommunicate.init("ceec0bdfcc3c76649fe62fd1759d2242", {
+Kommunicate.init("3d1b0536fe6e07919d1ed7aca46a20e81", {
   automaticChatOpenOnNavigation: true,
   popupWidget: false
 });

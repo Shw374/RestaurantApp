@@ -82,3 +82,22 @@ export const validateConfirmation = (
         requestAttributes
       );
 };
+
+export const elicitSlot = (
+  sessionAttributes,
+  intentName,
+  slots,
+  slotToElicit,
+  message
+) => {
+  return {
+    sessionAttributes,
+    dialogAction: {
+      type: "ElicitSlot",
+      intentName,
+      slots,
+      slotToElicit,
+      message,
+    },
+  };
+};
