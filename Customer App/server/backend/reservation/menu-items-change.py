@@ -10,15 +10,18 @@ def send_sns(message, subject):
 def lambda_handler(event, context):
     for record in event['Records']:
         # Making sure the record is modified.
-        if record['eventName'] == 'MODIFY':
+        if record['eventName'] == ['MODIFY']:
             # Extracting menu item and its respective description
-            menu_item_name = record['dynamodb']['NewImage']['name']['S']
-            description = record['dynamodb']['NewImage']['description']['S']
-            
-            subject = f'Menu Items Changed'
-            message = f'Menu Items: {menu_item_name} are changed.\n Description: {description}'
-            
-            # Send SNS notification
-            send_sns(message, subject)
-    
+            old_menu_item_name = record['dynamodb'].get('OldImage', {}).get('name', {}).get('S')
+            new_menu_item_name = record['dynamodb'].get('NewImage', {}).get('name', {}).get('S')
+            description = record['dynamodb'].get('NewImage', {}).get('description', {}).get('S', '')
+
+            # Checking if menu item name has changed
+            if old_menu_item_name and new_menu_item_name and old_menu_item_name != new_menu_item_name:
+                subject = 'Menu Items Changed'
+                message = f'Menu Item: {old_menu_item_name} has been changed to {new_menu_item_name}.\n Description: {description}'
+
+                # Sending SNS notification
+                send_sns(message, subject)
+
     return "Processing Complete"
