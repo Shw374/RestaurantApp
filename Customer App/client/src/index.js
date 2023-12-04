@@ -3,6 +3,12 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import Kommunicate from "@kommunicate/kommunicate-chatbot-plugin";
+
+Kommunicate.init("ceec0bdfcc3c76649fe62fd1759d2242", {
+  automaticChatOpenOnNavigation: true,
+  popupWidget: false
+});
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
