@@ -34,7 +34,7 @@ const Dashboard = () => {
               title="Order Peaks"
               subtitle="The top 10 periods when the food is most ordered"
               imageName="Post-Image-Fasting.png"
-              lookerUrl=""
+              lookerUrl="https://lookerstudio.google.com/embed/reporting/b0304e03-f4ff-4c71-8b42-d1e4d74f9e57/page/CQGkD"
               linkPath="order-peaks"
             />
           </Grid>
