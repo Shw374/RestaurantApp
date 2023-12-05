@@ -49,7 +49,7 @@ const Dashboard = () => {
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
             <DashboardCard
-              title="Restaurant Feedback 2"
+              title="Restaurant Feedback"
               subtitle="Reviews filtered based on restaurant names"
               imageName="user-feedback.jpg"
               lookerUrl="https://lookerstudio.google.com/embed/reporting/32f2f881-ab02-4485-8459-0db54e1afcaf/page/tEnnC"
